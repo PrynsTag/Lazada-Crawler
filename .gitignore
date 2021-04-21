@@ -452,3 +452,4 @@ pyvenv.cfg
 .venv
 pip-selfcheck.json
 
+online_shopping_notifier/spiders/info.py
