@@ -1,0 +1,1 @@
+worker: python3 online_shopping_notifier/spiders/spider_shopping.py
