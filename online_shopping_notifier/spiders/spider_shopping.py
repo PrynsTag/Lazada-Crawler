@@ -1,10 +1,9 @@
+import os
 import smtplib
 import ssl
 
 import scrapy
 from scrapy.crawler import CrawlerProcess
-
-from info import *
 
 
 def send_email():
@@ -12,8 +11,8 @@ def send_email():
     smtp_server = "smtp.gmail.com"
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
-        server.login(SENDER_EMAIL, SENDER_EMAIL_PASS)
-        server.sendmail(SENDER_EMAIL, RECEIVER_EMAIL, MESSAGE)
+        server.login(os.environ["SENDER_EMAIL"], os.environ["SENDER_EMAIL_PASS"])
+        server.sendmail(os.environ["SENDER_EMAIL"], os.environ["RECEIVER_EMAIL"], os.environ["MESSAGE"])
 
 
 def check_price(price):
@@ -25,7 +24,7 @@ class ShoppingNotifier(scrapy.Spider):
     name = "shop"
 
     def start_requests(self):
-        yield scrapy.Request(url=URL, callback=self.parse)
+        yield scrapy.Request(url=os.environ["URL"], callback=self.parse)
 
     def parse(self, response, **kwargs):
         price = response.css('#module_product_price_1 > div > div > span::text').extract_first()
