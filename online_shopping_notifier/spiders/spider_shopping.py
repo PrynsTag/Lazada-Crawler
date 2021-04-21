@@ -23,7 +23,9 @@ def check_price(price):
 
 class ShoppingNotifier(scrapy.Spider):
     name = "shop"
-    start_urls = [URL]
+
+    def start_requests(self):
+        yield scrapy.Request(url=URL, callback=self.parse)
 
     def parse(self, response, **kwargs):
         price = response.css('#module_product_price_1 > div > div > span::text').extract_first()
@@ -35,7 +37,8 @@ class ShoppingNotifier(scrapy.Spider):
 
 if __name__ == "__main__":
     process = CrawlerProcess({
-        'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
+        'USER_AGENT': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 '
+                      'Safari/537.36 OPR/75.0.3969.218 '
     })
     process.crawl(ShoppingNotifier)
     process.start()
