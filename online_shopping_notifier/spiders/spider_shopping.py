@@ -3,8 +3,10 @@ import ssl
 
 import scrapy
 from scrapy.crawler import CrawlerProcess
+from scrapy.exceptions import CloseSpider
+from scrapy.utils.project import get_project_settings
 
-from info import *
+from online_shopping_notifier.spiders.info import *
 
 
 def send_email():
@@ -19,13 +21,13 @@ def send_email():
 def check_price(price):
     if price < 2100:
         send_email()
+        CloseSpider()
 
 
 class ShoppingNotifier(scrapy.Spider):
     name = "shop"
-
-    def start_requests(self):
-        yield scrapy.Request(url=URL, callback=self.parse)
+    allowed_domains = ["lazada.com.ph"]
+    start_urls = [URL]
 
     def parse(self, response, **kwargs):
         price = response.css('#module_product_price_1 > div > div > span::text').extract_first()
@@ -36,9 +38,6 @@ class ShoppingNotifier(scrapy.Spider):
 
 
 if __name__ == "__main__":
-    process = CrawlerProcess({
-        'USER_AGENT': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 '
-                      'Safari/537.36 OPR/75.0.3969.218 '
-    })
+    process = CrawlerProcess(settings=get_project_settings())
     process.crawl(ShoppingNotifier)
     process.start()
